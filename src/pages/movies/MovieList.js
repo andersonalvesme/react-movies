@@ -2,20 +2,30 @@ import theMovieDBAPI from "../../services/TheMovieDBAPI";
 import {useEffect, useState} from "react";
 import {toast} from "react-toastify";
 import {Link} from "react-router-dom";
+import FavoriteButton from "../../components/FavoriteButton";
 
 export default function MovieList() {
     const [movies, setMovies] = useState([]);
+    const loadPopularMovies = () => {
+        theMovieDBAPI.get(`movie/popular`)
+            .then((result) => {
+                setMovies(result.data.results);
+            })
+            .catch((error) => {
+                toast.error("There was a problem.");
+                console.debug(error);
+            });
+    }
 
     useEffect(() => {
-        loadPopularMovies(setMovies);
+        loadPopularMovies();
     }, []);
 
     return (
         <div className="container">
-            <div className="page-title">Playing Now</div>
+            <div className="page-title">Popular Movies</div>
             <div className="row">
                 {movies.map((movie) => {
-                    console.log(movie);
                     return (
                         <div key={movie.id} className="column">
                             <div className="card">
@@ -31,6 +41,7 @@ export default function MovieList() {
                                         display: "inline",
                                         color: movie.vote_average >= 7 ? "green" : "red"
                                     }}>{movie.vote_average}</h4>
+                                    <FavoriteButton movie={movie}/>
                                 </div>
                             </div>
                         </div>
@@ -39,15 +50,4 @@ export default function MovieList() {
             </div>
         </div>
     )
-}
-
-function loadPopularMovies(setMovies) {
-    theMovieDBAPI.get(`movie/popular`)
-        .then((result) => {
-            setMovies(result.data.results);
-        })
-        .catch((error) => {
-            toast.error("There was a problem.");
-            console.debug(error);
-        });
 }
