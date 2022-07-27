@@ -1,5 +1,9 @@
+import {useParams} from "react-router-dom";
+
 export default function MovieDetail() {
+    const {id} = useParams();
+
     return (
-        <h1>Anime info</h1>
+        <h1>Movie {id}</h1>
     )
 }
